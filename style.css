@@ -3100,3 +3100,13 @@ ul {
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================
+   WHITE BACKGROUND FIX
+========================================================= */
+body, html {
+    background-color: #17171a !important;
+}
+
+.section, .hero, .cuet-section, .highlights-section, .results-section, .contact-section {
+    background-color: transparent !important;
+}
