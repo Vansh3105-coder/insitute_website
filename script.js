@@ -978,7 +978,6 @@ window.addEventListener(
 
     }
 );
-
 /* =========================================================
    SUBJECT CARDS POPUP INTERACTION (DYNAMIC TAGS & DATA)
 ========================================================= */
@@ -1129,8 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDescription = document.getElementById("modalDescription");
     const modalFeaturesContainer = document.getElementById("modalFeaturesContainer");
 
-    // Yahan humne saare possible card classes ko target kar liya hai (CUET, Tech, Projects, etc.)
-    const cards = document.querySelectorAll(".technology-card, .tech-card, .subject-card, .project-card, .highlight-card");
+    const cards = document.querySelectorAll(".tech-card, .subject-card");
 
     cards.forEach(card => {
         card.style.cursor = "pointer";
@@ -1140,16 +1138,17 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const subjectName = titleEl.textContent.trim();
             const data = subjectData[subjectName] || {
-                icon: "💻",
+                icon: "📚",
                 title: subjectName,
                 desc: "Comprehensive guidance, concept clarity, aur regular practice tests ke sath is subject ki preparation karwayi jayegi.",
-                tags: ["Concept Clarity", "Practical Learning", "Doubt Support"]
+                tags: ["Concept Clarity", "Regular Practice", "Doubt Support"]
             };
 
             modalIcon.textContent = data.icon;
             modalTitle.textContent = data.title;
             modalDescription.textContent = data.desc;
 
+            // Dynamically tags render karna
             modalFeaturesContainer.innerHTML = "";
             data.tags.forEach(tag => {
                 const span = document.createElement("span");
