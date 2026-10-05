@@ -1,4 +1,3 @@
-
 /* =========================================================
    SAMARTHYA CAREER POINT
    MAIN JAVASCRIPT
@@ -11,26 +10,15 @@
    ELEMENTS
 ========================================================= */
 
-const menuToggle =
-    document.getElementById("menuToggle");
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navMenu");
+const navLinks = document.querySelectorAll(".nav-link");
 
-const navMenu =
-    document.getElementById("navMenu");
+const inquiryForm = document.getElementById("inquiryForm");
 
-const navLinks =
-    document.querySelectorAll(".nav-link");
-
-const inquiryForm =
-    document.getElementById("inquiryForm");
-
-const successModal =
-    document.getElementById("successModal");
-
-const modalClose =
-    document.getElementById("modalClose");
-
-const modalOk =
-    document.getElementById("modalOk");
+const successModal = document.getElementById("successModal");
+const modalClose = document.getElementById("modalClose");
+const modalOk = document.getElementById("modalOk");
 
 
 /* =========================================================
@@ -39,13 +27,11 @@ const modalOk =
 
 function toggleMobileMenu() {
 
-    const isOpen =
-        navMenu.classList.toggle("active");
+    if (!navMenu || !menuToggle) return;
 
-    menuToggle.classList.toggle(
-        "active",
-        isOpen
-    );
+    const isOpen = navMenu.classList.toggle("active");
+
+    menuToggle.classList.toggle("active", isOpen);
 
     menuToggle.setAttribute(
         "aria-expanded",
@@ -58,11 +44,12 @@ function toggleMobileMenu() {
     );
 }
 
-
-menuToggle.addEventListener(
-    "click",
-    toggleMobileMenu
-);
+if (menuToggle) {
+    menuToggle.addEventListener(
+        "click",
+        toggleMobileMenu
+    );
+}
 
 
 /* =========================================================
@@ -72,6 +59,8 @@ menuToggle.addEventListener(
 navLinks.forEach((link) => {
 
     link.addEventListener("click", () => {
+
+        if (!navMenu || !menuToggle) return;
 
         navMenu.classList.remove("active");
 
@@ -85,7 +74,6 @@ navLinks.forEach((link) => {
         document.body.classList.remove(
             "menu-open"
         );
-
     });
 
 });
@@ -95,127 +83,169 @@ navLinks.forEach((link) => {
    SMOOTH SCROLLING
 ========================================================= */
 
-document.querySelectorAll(
-    'a[href^="#"]'
-).forEach((link) => {
+document
+    .querySelectorAll('a[href^="#"]')
+    .forEach((link) => {
 
-    link.addEventListener(
-        "click",
-        (event) => {
+        link.addEventListener(
+            "click",
+            (event) => {
 
-            const targetId =
-                link.getAttribute("href");
+                const targetId =
+                    link.getAttribute("href");
 
-            if (
-                !targetId ||
-                targetId === "#" ||
-                targetId.length <= 1
-            ) {
-                return;
+                if (
+                    !targetId ||
+                    targetId === "#" ||
+                    targetId.length <= 1
+                ) {
+                    return;
+                }
+
+                const targetElement =
+                    document.querySelector(
+                        targetId
+                    );
+
+                if (!targetElement) return;
+
+                event.preventDefault();
+
+                const header =
+                    document.querySelector(
+                        ".header"
+                    );
+
+                const headerHeight =
+                    header
+                        ? header.offsetHeight
+                        : 0;
+
+                const targetPosition =
+                    targetElement.getBoundingClientRect()
+                        .top +
+                    window.scrollY -
+                    headerHeight;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: "smooth"
+                });
             }
+        );
 
-            const targetElement =
-                document.querySelector(targetId);
+    });
 
-            if (!targetElement) {
-                return;
-            }
 
-            event.preventDefault();
+/* =========================================================
+   SCROLL REVEAL ANIMATIONS
+========================================================= */
 
-            const header =
-                document.querySelector(".header");
+const revealElements =
+    document.querySelectorAll(
+        ".reveal, .reveal-left, .reveal-right, .reveal-scale"
+    );
 
-            const headerHeight =
-                header
-                    ? header.offsetHeight
-                    : 0;
 
-            const targetPosition =
-                targetElement.getBoundingClientRect().top +
-                window.scrollY -
-                headerHeight;
+const revealObserver =
+    new IntersectionObserver(
+        (entries) => {
 
-            window.scrollTo({
-                top: targetPosition,
-                behavior: "smooth"
+            entries.forEach((entry) => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add(
+                        "show"
+                    );
+
+                } else {
+
+                    entry.target.classList.remove(
+                        "show"
+                    );
+                }
+
             });
 
+        },
+        {
+            threshold: 0.15,
+            rootMargin: "0px 0px -80px 0px"
         }
     );
+
+
+revealElements.forEach((element) => {
+
+    revealObserver.observe(element);
 
 });
 
 
-
 /* =========================================================
-   AUTOMATIC STAGGER SYSTEM
+   STAGGERED CARD ANIMATIONS
 ========================================================= */
 
-/*
- * These containers automatically receive the
- * stagger animation without requiring us to manually
- * add classes to every individual card.
- */
-
-const staggerGroups = [
-
-    ".subjects-grid",
-
-    ".technology-grid",
-
-    ".highlights-grid",
-
-    ".results-grid",
-
-    ".stats-grid"
-
-];
+const staggerContainers =
+    document.querySelectorAll(
+        ".technology-grid, .highlights-grid, .results-grid, .stats-grid"
+    );
 
 
-staggerGroups.forEach((selector) => {
-
-    const container =
-        document.querySelector(selector);
-
-    if (!container) {
-        return;
-    }
+staggerContainers.forEach((container) => {
 
     container.classList.add(
         "stagger-container"
     );
 
-    const children =
+    const items =
         Array.from(container.children);
 
-    children.forEach((child) => {
 
-        child.classList.add(
+    items.forEach((item, index) => {
+
+        item.classList.add(
             "stagger-item"
+        );
+
+        item.style.setProperty(
+            "--stagger-delay",
+            `${index * 0.1}s`
         );
 
     });
 
-    /*
-     * Observe the entire group.
-     */
 
-    const staggerObserver =
+    const observer =
         new IntersectionObserver(
-            (entries, observer) => {
+            (entries) => {
 
                 entries.forEach((entry) => {
 
                     if (entry.isIntersecting) {
 
-                        entry.target.classList.add(
-                            "show"
-                        );
+                        Array.from(
+                            container.children
+                        ).forEach((item) => {
 
-                        observer.unobserve(
-                            entry.target
-                        );
+                            item.classList.add(
+                                "show"
+                            );
+
+                        });
+
+                    } else {
+
+                        Array.from(
+                            container.children
+                        ).forEach((item) => {
+
+                            item.classList.remove(
+                                "show"
+                            );
+
+                        });
 
                     }
 
@@ -223,189 +253,85 @@ staggerGroups.forEach((selector) => {
 
             },
             {
-                threshold: 0.08,
-                rootMargin: "0px 0px -50px 0px"
+                threshold: 0.12,
+                rootMargin:
+                    "0px 0px -60px 0px"
             }
         );
 
-    staggerObserver.observe(container);
 
-});
-
-
-// ==========================================
-// SCROLL REVEAL ANIMATIONS
-// ==========================================
-
-const revealElements = document.querySelectorAll(
-    ".reveal, .reveal-left, .reveal-right, .reveal-scale"
-);
-
-const revealObserver = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-
-            if (entry.isIntersecting) {
-                // Element is entering the screen
-                entry.target.classList.add("show");
-            } else {
-                // Element is leaving the screen
-                entry.target.classList.remove("show");
-            }
-
-        });
-    },
-    {
-        threshold: 0.15,
-        rootMargin: "0px 0px -80px 0px"
-    }
-);
-
-revealElements.forEach((element) => {
-    revealObserver.observe(element);
-});
-
-
-// ==========================================
-// STAGGERED CARD ANIMATIONS
-// ==========================================
-
-const staggerContainers = document.querySelectorAll(
-    ".subjects-grid, .technology-grid, .highlights-grid, .results-grid, .stats-grid"
-);
-
-staggerContainers.forEach((container) => {
-
-    container.classList.add("stagger-container");
-
-    const items = container.children;
-
-    Array.from(items).forEach((item) => {
-        item.classList.add("stagger-item");
-    });
-
-    const staggerObserver = new IntersectionObserver(
-        (entries) => {
-
-            entries.forEach((entry) => {
-
-                if (entry.isIntersecting) {
-                    // Cards appear
-                    entry.target.classList.add("show");
-                } else {
-                    // Cards disappear again
-                    entry.target.classList.remove("show");
-                }
-
-            });
-
-        },
-        {
-            threshold: 0.12,
-            rootMargin: "0px 0px -60px 0px"
-        }
-    );
-
-    staggerObserver.observe(container);
-});
-
-
-// ==========================================
-// SECTION HEADINGS
-// ==========================================
-
-const sectionHeadings = document.querySelectorAll(".section-heading");
-
-sectionHeadings.forEach((heading) => {
-
-    heading.classList.add("reveal");
-
-    revealObserver.observe(heading);
-
-});
-
-
-// ==========================================
-// LEFT / RIGHT SECTION ANIMATIONS
-// ==========================================
-
-const leftElements = document.querySelectorAll(
-    ".project-content, .contact-info"
-);
-
-leftElements.forEach((element) => {
-
-    element.classList.add("reveal-left");
-
-    revealObserver.observe(element);
-
-});
-
-
-const rightElements = document.querySelectorAll(
-    ".form-container"
-);
-
-rightElements.forEach((element) => {
-
-    element.classList.add("reveal-right");
-
-    revealObserver.observe(element);
+    observer.observe(container);
 
 });
 
 
 /* =========================================================
-   ADD REVEAL TO MAJOR CONTENT BLOCKS
+   SECTION HEADINGS
 ========================================================= */
 
-const projectContent =
-    document.querySelector(".project-content");
-
-const contactInfo =
-    document.querySelector(".contact-info");
-
-const formContainer =
-    document.querySelector(".form-container");
+const sectionHeadings =
+    document.querySelectorAll(
+        ".section-heading"
+    );
 
 
-if (projectContent) {
+sectionHeadings.forEach((heading) => {
 
-    projectContent.classList.add(
+    heading.classList.add(
+        "reveal"
+    );
+
+    revealObserver.observe(
+        heading
+    );
+
+});
+
+
+/* =========================================================
+   LEFT SIDE ANIMATIONS
+========================================================= */
+
+const leftElements =
+    document.querySelectorAll(
+        ".project-content, .contact-info"
+    );
+
+
+leftElements.forEach((element) => {
+
+    element.classList.add(
         "reveal-left"
     );
 
     revealObserver.observe(
-        projectContent
+        element
     );
 
-}
+});
 
 
-if (contactInfo) {
+/* =========================================================
+   RIGHT SIDE ANIMATIONS
+========================================================= */
 
-    contactInfo.classList.add(
-        "reveal-left"
+const rightElements =
+    document.querySelectorAll(
+        ".form-container"
     );
 
-    revealObserver.observe(
-        contactInfo
-    );
 
-}
+rightElements.forEach((element) => {
 
-
-if (formContainer) {
-
-    formContainer.classList.add(
+    element.classList.add(
         "reveal-right"
     );
 
     revealObserver.observe(
-        formContainer
+        element
     );
 
-}
+});
 
 
 /* =========================================================
@@ -421,17 +347,21 @@ const sections =
 function updateActiveNavigation() {
 
     const header =
-        document.querySelector(".header");
+        document.querySelector(
+            ".header"
+        );
 
     const headerHeight =
         header
             ? header.offsetHeight
             : 0;
 
+
     const scrollPosition =
         window.scrollY +
         headerHeight +
         100;
+
 
     let currentSection = "home";
 
@@ -444,10 +374,12 @@ function updateActiveNavigation() {
         const sectionHeight =
             section.offsetHeight;
 
+
         if (
             scrollPosition >= sectionTop &&
             scrollPosition <
-                sectionTop + sectionHeight
+                sectionTop +
+                sectionHeight
         ) {
 
             currentSection =
@@ -466,7 +398,7 @@ function updateActiveNavigation() {
         link.classList.toggle(
             "active",
             linkTarget ===
-            `#${currentSection}`
+                `#${currentSection}`
         );
 
     });
@@ -526,13 +458,14 @@ function setError(
     message
 ) {
 
+    if (!input || !errorElement) return;
+
     input.classList.add(
         "input-error"
     );
 
     errorElement.textContent =
         message;
-
 }
 
 
@@ -541,12 +474,14 @@ function clearError(
     errorElement
 ) {
 
+    if (!input || !errorElement) return;
+
     input.classList.remove(
         "input-error"
     );
 
-    errorElement.textContent = "";
-
+    errorElement.textContent =
+        "";
 }
 
 
@@ -579,99 +514,124 @@ function clearAllErrors() {
    PHONE INPUT
 ========================================================= */
 
-phoneInput.addEventListener(
-    "input",
-    () => {
+if (phoneInput) {
 
-        phoneInput.value =
-            phoneInput.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
+    phoneInput.addEventListener(
+        "input",
+        () => {
 
-    }
-);
+            phoneInput.value =
+                phoneInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+        }
+    );
+
+}
 
 
 /* =========================================================
    REAL-TIME ERROR CLEARING
 ========================================================= */
 
-nameInput.addEventListener(
-    "input",
-    () => {
+if (nameInput) {
 
-        if (
-            nameInput.value.trim().length >= 2
-        ) {
+    nameInput.addEventListener(
+        "input",
+        () => {
 
-            clearError(
-                nameInput,
-                nameError
-            );
+            if (
+                nameInput.value
+                    .trim()
+                    .length >= 2
+            ) {
 
-        }
+                clearError(
+                    nameInput,
+                    nameError
+                );
 
-    }
-);
-
-
-phoneInput.addEventListener(
-    "input",
-    () => {
-
-        if (
-            /^[6-9]\d{9}$/.test(
-                phoneInput.value
-            )
-        ) {
-
-            clearError(
-                phoneInput,
-                phoneError
-            );
+            }
 
         }
+    );
 
-    }
-);
-
-
-courseInput.addEventListener(
-    "change",
-    () => {
-
-        if (
-            courseInput.value !== ""
-        ) {
-
-            clearError(
-                courseInput,
-                courseError
-            );
-
-        }
-
-    }
-);
+}
 
 
-messageInput.addEventListener(
-    "input",
-    () => {
+if (phoneInput) {
 
-        if (
-            messageInput.value.trim().length >= 10
-        ) {
+    phoneInput.addEventListener(
+        "input",
+        () => {
 
-            clearError(
-                messageInput,
-                messageError
-            );
+            if (
+                /^[6-9]\d{9}$/
+                    .test(
+                        phoneInput.value
+                    )
+            ) {
+
+                clearError(
+                    phoneInput,
+                    phoneError
+                );
+
+            }
 
         }
+    );
 
-    }
-);
+}
+
+
+if (courseInput) {
+
+    courseInput.addEventListener(
+        "change",
+        () => {
+
+            if (
+                courseInput.value !== ""
+            ) {
+
+                clearError(
+                    courseInput,
+                    courseError
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+if (messageInput) {
+
+    messageInput.addEventListener(
+        "input",
+        () => {
+
+            if (
+                messageInput.value
+                    .trim()
+                    .length >= 10
+            ) {
+
+                clearError(
+                    messageInput,
+                    messageError
+                );
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================================
@@ -688,7 +648,10 @@ function validateForm() {
     /* NAME */
 
     const name =
-        nameInput.value.trim();
+        nameInput
+            ? nameInput.value.trim()
+            : "";
+
 
     if (name.length === 0) {
 
@@ -716,7 +679,10 @@ function validateForm() {
     /* PHONE */
 
     const phone =
-        phoneInput.value.trim();
+        phoneInput
+            ? phoneInput.value.trim()
+            : "";
+
 
     if (phone.length === 0) {
 
@@ -746,6 +712,7 @@ function validateForm() {
     /* COURSE */
 
     if (
+        courseInput &&
         courseInput.value === ""
     ) {
 
@@ -763,7 +730,10 @@ function validateForm() {
     /* MESSAGE */
 
     const message =
-        messageInput.value.trim();
+        messageInput
+            ? messageInput.value.trim()
+            : "";
+
 
     if (message.length === 0) {
 
@@ -797,57 +767,77 @@ function validateForm() {
    FORM SUBMISSION
 ========================================================= */
 
-inquiryForm.addEventListener(
-    "submit",
-    (event) => {
+if (inquiryForm) {
 
-        event.preventDefault();
+    inquiryForm.addEventListener(
+        "submit",
+        (event) => {
 
-        const isValid =
-            validateForm();
+            event.preventDefault();
 
-        if (!isValid) {
 
-            const firstError =
-                inquiryForm.querySelector(
-                    ".input-error"
-                );
+            const isValid =
+                validateForm();
 
-            if (firstError) {
-                firstError.focus();
+
+            if (!isValid) {
+
+                const firstError =
+                    inquiryForm.querySelector(
+                        ".input-error"
+                    );
+
+                if (firstError) {
+
+                    firstError.focus();
+
+                }
+
+                return;
+
             }
 
-            return;
+
+            const submitButton =
+                inquiryForm.querySelector(
+                    ".submit-button"
+                );
+
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.innerHTML =
+                    "Submitting...";
+
+            }
+
+
+            setTimeout(() => {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.innerHTML =
+                        'Submit Inquiry <span>→</span>';
+
+                }
+
+
+                inquiryForm.reset();
+
+                showSuccessModal();
+
+            }, 800);
+
         }
+    );
 
-
-        const submitButton =
-            inquiryForm.querySelector(
-                ".submit-button"
-            );
-
-
-        submitButton.disabled = true;
-
-        submitButton.innerHTML =
-            "Submitting...";
-
-
-        setTimeout(() => {
-
-            submitButton.disabled = false;
-
-            submitButton.innerHTML =
-                'Submit Inquiry <span>→</span>';
-
-            inquiryForm.reset();
-
-            showSuccessModal();
-
-        }, 800);
-
-    }
-);
+}
 
 
 /* =========================================================
@@ -855,6 +845,8 @@ inquiryForm.addEventListener(
 ========================================================= */
 
 function showSuccessModal() {
+
+    if (!successModal) return;
 
     successModal.classList.add(
         "active"
@@ -874,6 +866,8 @@ function showSuccessModal() {
 
 function closeSuccessModal() {
 
+    if (!successModal) return;
+
     successModal.classList.remove(
         "active"
     );
@@ -890,36 +884,49 @@ function closeSuccessModal() {
 }
 
 
-modalClose.addEventListener(
-    "click",
-    closeSuccessModal
-);
+if (modalClose) {
+
+    modalClose.addEventListener(
+        "click",
+        closeSuccessModal
+    );
+
+}
 
 
-modalOk.addEventListener(
-    "click",
-    closeSuccessModal
-);
+if (modalOk) {
+
+    modalOk.addEventListener(
+        "click",
+        closeSuccessModal
+    );
+
+}
 
 
 /* =========================================================
    CLOSE MODAL OUTSIDE
 ========================================================= */
 
-successModal.addEventListener(
-    "click",
-    (event) => {
+if (successModal) {
 
-        if (
-            event.target === successModal
-        ) {
+    successModal.addEventListener(
+        "click",
+        (event) => {
 
-            closeSuccessModal();
+            if (
+                event.target ===
+                successModal
+            ) {
+
+                closeSuccessModal();
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
@@ -932,6 +939,7 @@ document.addEventListener(
 
         if (
             event.key === "Escape" &&
+            successModal &&
             successModal.classList.contains(
                 "active"
             )
@@ -954,7 +962,9 @@ window.addEventListener(
     () => {
 
         if (
-            window.innerWidth > 850
+            window.innerWidth > 850 &&
+            navMenu &&
+            menuToggle
         ) {
 
             navMenu.classList.remove(
@@ -979,3 +989,160 @@ window.addEventListener(
     }
 );
 
+
+/* =========================================================
+   CUET SUBJECT SLIDER
+========================================================= */
+
+const subjectSlider =
+    document.querySelector(
+        ".subjects-grid"
+    );
+
+const subjectCards =
+    document.querySelectorAll(
+        ".subject-card"
+    );
+
+const subjectPrev =
+    document.querySelector(
+        ".subject-prev"
+    );
+
+const subjectNext =
+    document.querySelector(
+        ".subject-next"
+    );
+
+
+if (
+    subjectSlider &&
+    subjectCards.length &&
+    subjectPrev &&
+    subjectNext
+) {
+
+
+    /* GET CARD SCROLL DISTANCE */
+
+    function getScrollAmount() {
+
+        const card =
+            subjectCards[0];
+
+        if (!card) return 0;
+
+
+        const cardWidth =
+            card.offsetWidth;
+
+
+        const gap =
+            parseFloat(
+                getComputedStyle(
+                    subjectSlider
+                ).gap
+            ) || 0;
+
+
+        return cardWidth + gap;
+
+    }
+
+
+    /* UPDATE BUTTON STATES */
+
+    function updateSliderButtons() {
+
+        const maxScroll =
+            subjectSlider.scrollWidth -
+            subjectSlider.clientWidth;
+
+
+        subjectPrev.disabled =
+            subjectSlider.scrollLeft <= 5;
+
+
+        subjectNext.disabled =
+            subjectSlider.scrollLeft >=
+            maxScroll - 5;
+
+    }
+
+
+    /* NEXT */
+
+    subjectNext.addEventListener(
+        "click",
+        () => {
+
+            subjectSlider.scrollBy({
+
+                left:
+                    getScrollAmount(),
+
+                behavior:
+                    "smooth"
+
+            });
+
+        }
+    );
+
+
+    /* PREVIOUS */
+
+    subjectPrev.addEventListener(
+        "click",
+        () => {
+
+            subjectSlider.scrollBy({
+
+                left:
+                    -getScrollAmount(),
+
+                behavior:
+                    "smooth"
+
+            });
+
+        }
+    );
+
+
+    /* SCROLL EVENT */
+
+    subjectSlider.addEventListener(
+        "scroll",
+        updateSliderButtons,
+        {
+            passive: true
+        }
+    );
+
+
+    /* RESIZE */
+
+    window.addEventListener(
+        "resize",
+        updateSliderButtons
+    );
+
+
+    updateSliderButtons();
+
+}
+
+
+/* =========================================================
+   PAGE LOAD
+========================================================= */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        updateActiveNavigation();
+
+    }
+);
