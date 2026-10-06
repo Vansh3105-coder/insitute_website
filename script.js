@@ -1120,6 +1120,9 @@ const subjectData = {
     }
 };
 
+/* =========================================================
+   POPUP MODAL CLICK BINDING FIX
+========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("subjectModal");
     const closeModalBtn = document.getElementById("closeModal");
@@ -1128,7 +1131,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDescription = document.getElementById("modalDescription");
     const modalFeaturesContainer = document.getElementById("modalFeaturesContainer");
 
-    const cards = document.querySelectorAll(".tech-card, .subject-card");
+    // Yahan .technology-card bhi add kar diya hai
+    const cards = document.querySelectorAll(".technology-card, .tech-card, .subject-card, .project-card, .highlight-card");
 
     cards.forEach(card => {
         card.style.cursor = "pointer";
@@ -1138,17 +1142,16 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const subjectName = titleEl.textContent.trim();
             const data = subjectData[subjectName] || {
-                icon: "📚",
+                icon: "💻",
                 title: subjectName,
                 desc: "Comprehensive guidance, concept clarity, aur regular practice tests ke sath is subject ki preparation karwayi jayegi.",
-                tags: ["Concept Clarity", "Regular Practice", "Doubt Support"]
+                tags: ["Concept Clarity", "Practical Learning", "Doubt Support"]
             };
 
             modalIcon.textContent = data.icon;
             modalTitle.textContent = data.title;
             modalDescription.textContent = data.desc;
 
-            // Dynamically tags render karna
             modalFeaturesContainer.innerHTML = "";
             data.tags.forEach(tag => {
                 const span = document.createElement("span");
