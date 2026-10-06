@@ -3212,3 +3212,114 @@ body, html {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.85);
 }
+/* =========================================================
+   MOBILE RESPONSIVENESS OPTIMIZATION FIXES
+========================================================= */
+
+@media (max-width: 768px) {
+    /* Container padding adjustment for small screens */
+    .container {
+        width: min(100% - 24px, var(--container));
+    }
+
+    /* Hero section spacing & typography fine-tuning */
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+        padding: 50px 0;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .hero-trust {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-card-wrapper {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Stats grid mobile fix */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stat-card {
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .stat-card:last-child {
+        border-bottom: none !important;
+    }
+
+    /* Subjects and highlights grid adjustments for sliders/touch */
+    .subjects-slider,
+    .highlights-slider {
+        padding: 0 35px;
+    }
+
+    .subject-card,
+    .highlight-card {
+        flex: 0 0 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Technology grid stacking on mobile */
+    .technology-grid {
+        grid-template-columns: 1fr !important;
+        max-height: 380px;
+    }
+
+    /* Results section layout fix */
+    .results-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .result-card {
+        grid-column: span 1 !important;
+    }
+
+    /* Contact form spacing */
+    .contact-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 40px;
+    }
+
+    .form-container {
+        padding: 25px 20px !important;
+    }
+
+    /* Modal responsiveness on mobile */
+    .subject-modal-content {
+        width: 95% !important;
+        padding: 25px 20px !important;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.2rem !important;
+    }
+
+    .section-heading h2 {
+        font-size: 1.8rem !important;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+    }
+}
