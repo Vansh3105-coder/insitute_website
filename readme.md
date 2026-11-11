@@ -13,7 +13,7 @@ The project focuses on creating a professional online presence for a coaching in
 * 🧭 Navigation bar with smooth scrolling
 * 📚 Coaching institute information sections
 * 📞 Contact/inquiry section
-* ⚡ Lightweight frontend implementation
+* ⚡ Lightweight frontend
 * 💻 Works across desktop, tablet and mobile screens
 
 ## 🛠️ Technologies Used
